@@ -931,6 +931,7 @@ func (ep *endpoint) assignAddressVersion(ipVer int, ipam ipamapi.Ipam) error {
 	} else if *address != nil {
 		progAdd = (*address).IP
 	}
+	log.Debugf("Assign prefer address: %v from pool: %v", progAdd, poolID)	
 
 	for _, d := range ipInfo {
 		if progAdd != nil && !d.Pool.Contains(progAdd) {
