@@ -33,12 +33,23 @@ type saveSession struct {
 }
 
 func (l *tarexporter) Save(names []string, outStream io.Writer) error {
-	images, err := l.parseNames(names)
-	if err != nil {
-		return err
-	}
+	switch l.format {
+	case "":
+		images, err := l.parseNames(names)
+		if err != nil {
+			return err
+		}
 
-	return (&saveSession{tarexporter: l, images: images}).save(outStream)
+		return (&saveSession{tarexporter: l, images: images}).save(outStream)
+	case "oci":
+		images, err := l.parseOCINames(names)
+		if err != nil {
+			return err
+		}
+
+		return (&ociSaveSession{tarexporter: l, images: images}).save(outStream)
+	}
+	return fmt.Errorf("format %s unsupported", l.format)
 }
 
 func (l *tarexporter) parseNames(names []string) (map[image.ID]*imageDescriptor, error) {
@@ -120,7 +131,6 @@ func (s *saveSession) save(outStream io.Writer) error {
 	s.savedLayers = make(map[string]struct{})
 	s.diffIDPaths = make(map[layer.DiffID]string)
 
-	// get image json
 	tempDir, err := ioutil.TempDir("", "docker-export-")
 	if err != nil {
 		return err
@@ -315,7 +325,6 @@ func (s *saveSession) saveLayer(id layer.ChainID, legacyImg image.V1Image, creat
 		}
 		os.Symlink(relPath, layerPath)
 	} else {
-
 		tarFile, err := os.Create(layerPath)
 		if err != nil {
 			return distribution.Descriptor{}, err

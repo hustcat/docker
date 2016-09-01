@@ -43,6 +43,18 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
 	if err := chrootarchive.Untar(inTar, tmpDir, nil); err != nil {
 		return err
 	}
+
+	// check and try to load an OCI image layout
+	ociLayoutPath, err := safePath(tmpDir, "oci-layout")
+	if err != nil {
+		return err
+	}
+	ociLayoutFile, err := os.Open(ociLayoutPath)
+	if err == nil {
+		ociLayoutFile.Close()
+		return l.loadOCI(tmpDir, outStream, progressOutput)
+	}
+
 	// read manifest, if no file then load in legacy mode
 	manifestPath, err := safePath(tmpDir, manifestFileName)
 	if err != nil {

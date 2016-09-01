@@ -69,6 +69,9 @@ clone git github.com/docker/go-connections 988efe982fdecb46f01d53465878ff1f2ff41
 clone git github.com/RackSec/srslog 365bf33cd9acc21ae1c355209865f17228ca534e
 clone git github.com/imdario/mergo 0.2.1
 
+clone git github.com/containers/image 58dedd82c1cd4a8570f7f809e162bd5d8356bcb8
+clone git github.com/opencontainers/image-spec 9a93cca4f6d1f6b3509c6b8f7bc858e15b1ce508
+
 #get libnetwork packages
 clone git github.com/docker/libnetwork 9fbb4ecbb45af655c4ac3c2f3a849b2294cb447a
 clone git github.com/docker/go-events 18b43f1bc85d9cdd42c05a6cd2d444c7a200a894
