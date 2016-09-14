@@ -187,7 +187,7 @@ func (p *initProcess) externalDescriptors() []string {
 
 func (p *initProcess) start() (err error) {
 	defer p.parentPipe.Close()
-	err = p.cmd.Start()
+	err = p.cmd.Start() ///dockerinit, reexec.Init->initializer(native/init.go)
 	p.process.ops = p
 	p.childPipe.Close()
 	if err != nil {

@@ -153,12 +153,12 @@ func (d *Driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, hooks execd
 		return execdriver.ExitStatus{ExitCode: -1}, err
 	}
 
-	cont, err := d.factory.Create(c.ID, container)
+	cont, err := d.factory.Create(c.ID, container) ///(l *LinuxFactory) Create
 	if err != nil {
 		return execdriver.ExitStatus{ExitCode: -1}, err
 	}
 
-	if err := cont.Start(p); err != nil {
+	if err := cont.Start(p); err != nil { ///linuxContainer.Start
 		return execdriver.ExitStatus{ExitCode: -1}, err
 	}
 	d.Lock()

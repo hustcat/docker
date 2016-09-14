@@ -32,7 +32,7 @@ func initializer() {
 	if err != nil {
 		fatal(err)
 	}
-	if err := factory.StartInitialization(); err != nil {
+	if err := factory.StartInitialization(); err != nil { ///(l *LinuxFactory) StartInitialization
 		fatal(err)
 	}
 

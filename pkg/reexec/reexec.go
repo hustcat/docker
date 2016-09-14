@@ -21,7 +21,7 @@ func Register(name string, initializer func()) {
 // Init is called as the first part of the exec process and returns true if an
 // initialization function was called.
 func Init() bool {
-	initializer, exists := registeredInitializers[os.Args[0]]
+	initializer, exists := registeredInitializers[os.Args[0]] ///native/init.go
 	if exists {
 		initializer()
 

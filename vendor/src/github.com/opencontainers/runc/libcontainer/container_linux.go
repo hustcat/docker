@@ -180,12 +180,12 @@ func (c *linuxContainer) Start(process *Process) error {
 	if err != nil {
 		return err
 	}
-	doInit := status == Destroyed
-	parent, err := c.newParentProcess(process, doInit)
+	doInit := status == Destroyed                      ///newly created
+	parent, err := c.newParentProcess(process, doInit) ///return initProcess
 	if err != nil {
 		return newSystemError(err)
 	}
-	if err := parent.start(); err != nil {
+	if err := parent.start(); err != nil { ///initProcess.start()
 		// terminate the process to ensure that it properly is reaped.
 		if err := parent.terminate(); err != nil {
 			logrus.Warn(err)

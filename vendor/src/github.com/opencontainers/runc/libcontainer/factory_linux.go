@@ -114,7 +114,7 @@ func New(root string, options ...func(*LinuxFactory) error) (Factory, error) {
 		Validator: validate.New(),
 		CriuPath:  "criu",
 	}
-	InitArgs(os.Args[0], "init")(l)
+	InitArgs(os.Args[0], "init")(l) ///init path of container:/proc/self/exe
 	Cgroupfs(l)
 	for _, opt := range options {
 		if err := opt(l); err != nil {
@@ -248,11 +248,11 @@ func (l *LinuxFactory) StartInitialization() (err error) {
 		// ensure that this pipe is always closed
 		pipe.Close()
 	}()
-	i, err = newContainerInit(it, pipe)
+	i, err = newContainerInit(it, pipe) ///linuxStandardInit, (standard_init_linux.go)
 	if err != nil {
 		return err
 	}
-	return i.Init()
+	return i.Init() ///linuxStandardInit.Init
 }
 
 func (l *LinuxFactory) loadState(root string) (*State, error) {
