@@ -4,6 +4,8 @@ package native
 
 import (
 	"fmt"
+	"github.com/docker/docker/daemon/execdriver/native/template"
+	"os"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -14,6 +16,7 @@ import (
 
 	"github.com/docker/docker/volume"
 	"github.com/opencontainers/runc/libcontainer/apparmor"
+	"github.com/opencontainers/runc/libcontainer/cgroups"
 	"github.com/opencontainers/runc/libcontainer/configs"
 	"github.com/opencontainers/runc/libcontainer/devices"
 )
@@ -504,6 +507,21 @@ func (d *Driver) setupMounts(container *configs.Config, c *execdriver.Command) e
 		container.Mounts = append(container.Mounts, mount)
 	}
 
+	for _, item := range template.CgroupProcs {
+		if subsystemRoot, err := cgroups.FindCgroupMountpoint(item[0]); err == nil {
+			if _, err = os.Stat(filepath.Join(subsystemRoot, item[1])); err == nil {
+				source := filepath.Join(subsystemRoot, "docker", container.Cgroups.Name, item[1])
+				dest := filepath.Join("/proc", item[2])
+				flags := syscall.MS_BIND | syscall.MS_REC | syscall.MS_RDONLY
+				container.Mounts = append(container.Mounts, &configs.Mount{
+					Device:      "bind",
+					Source:      source,
+					Destination: dest,
+					Flags:       flags,
+				})
+			}
+		}
+	}
 	checkResetVolumePropagation(container)
 	return nil
 }

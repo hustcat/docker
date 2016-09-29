@@ -9,6 +9,15 @@ import (
 
 const defaultMountFlags = syscall.MS_NOEXEC | syscall.MS_NOSUID | syscall.MS_NODEV
 
+var CgroupProcs [5][3]string = [5][3]string{
+	// subsystem, entry, proc entry
+	{"cpuset", "cpuset.cpuinfo", "cpuinfo"},
+	{"cpuset", "cpuset.loadavg", "loadavg"},
+	{"cpuset", "cpuset.stat", "stat"},
+	{"memory", "memory.meminfo", "meminfo"},
+	{"memory", "memory.vmstat", "vmstat"},
+}
+
 // New returns the docker default configuration for libcontainer
 func New() *configs.Config {
 	container := &configs.Config{
