@@ -25,7 +25,7 @@
 
 FROM docker-dev:master
 
-ENV DOCKER_BUILDTAGS apparmor seccomp selinux exclude_graphdriver_aufs
+ENV DOCKER_BUILDTAGS exclude_graphdriver_aufs
 
 RUN rm -rf /go/src/github.com/docker/docker/*
 # Upload docker source

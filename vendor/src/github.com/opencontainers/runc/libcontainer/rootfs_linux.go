@@ -306,9 +306,12 @@ func checkMountDestination(rootfs, dest string) error {
 		// These entries can be bind mounted by files emulated by fuse,
 		// so commands like top, free displays stats in container.
 		"/proc/cpuinfo",
-		"/proc/diskstats",
+		"/proc/loadavg",
+		"/proc/vmstat",
 		"/proc/meminfo",
 		"/proc/stat",
+		"/proc/uptime",
+		"/proc/diskstats",
 		"/proc/net/dev",
 	}
 	for _, valid := range validDestinations {

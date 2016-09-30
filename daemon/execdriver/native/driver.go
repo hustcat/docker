@@ -141,10 +141,12 @@ func (d *Driver) Run(c *execdriver.Command, pipes *execdriver.Pipes, hooks execd
 	}
 
 	p := &libcontainer.Process{
-		Args: append([]string{c.ProcessConfig.Entrypoint}, c.ProcessConfig.Arguments...),
-		Env:  c.ProcessConfig.Env,
-		Cwd:  c.WorkingDir,
-		User: c.ProcessConfig.User,
+		Args:   append([]string{c.ProcessConfig.Entrypoint}, c.ProcessConfig.Arguments...),
+		Env:    c.ProcessConfig.Env,
+		Cwd:    c.WorkingDir,
+		User:   c.ProcessConfig.User,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
 	}
 
 	wg := sync.WaitGroup{}

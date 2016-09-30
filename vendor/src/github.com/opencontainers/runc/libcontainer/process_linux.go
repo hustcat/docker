@@ -188,6 +188,7 @@ func (p *initProcess) externalDescriptors() []string {
 func (p *initProcess) start() (err error) {
 	defer p.parentPipe.Close()
 	err = p.cmd.Start()
+	fmt.Printf("Path=%s, Args=%v, Env=%v, Stderr=%v, Stdout=%v \n", p.cmd.Path, p.cmd.Args, p.cmd.Env, p.cmd.Stderr, p.cmd.Stdout)
 	p.process.ops = p
 	p.childPipe.Close()
 	if err != nil {
