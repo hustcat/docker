@@ -1,12 +1,13 @@
 package fifo
 
 import (
-	"context"
 	"io"
 	"os"
 	"runtime"
 	"sync"
 	"syscall"
+
+	"golang.org/x/net/context"
 
 	"github.com/pkg/errors"
 )
