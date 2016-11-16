@@ -13,6 +13,7 @@ import (
 	"github.com/docker/docker/image"
 	"github.com/docker/docker/layer"
 	"github.com/docker/docker/pkg/progress"
+	"github.com/docker/docker/reference"
 	imgspec "github.com/opencontainers/image-spec/specs-go"
 	imgspecv1 "github.com/opencontainers/image-spec/specs-go/v1"
 )
@@ -105,6 +106,18 @@ func (l *tarexporter) loadOCI(tmpDir string, outStream io.Writer, progressOutput
 
 		// TODO(runcom): load tag!!! and increment imgRefCount
 		imageRefCount = 0
+		dockerRef := fmt.Sprintf("%s:%s", l.name, ref)
+		named, err := reference.ParseNamed(dockerRef)
+		if err != nil {
+			return err
+		}
+		tagRef, ok := named.(reference.NamedTagged)
+		if !ok {
+			return fmt.Errorf("invalid tag %q", tagRef)
+		}
+		l.setLoadedTag(tagRef, imgID.Digest(), outStream)
+		outStream.Write([]byte(fmt.Sprintf("Loaded image: %s\n", ref)))
+		imageRefCount++
 
 		l.loggerImgEvent.LogImageEvent(imgID.String(), imgID.String(), "load")
 	}
