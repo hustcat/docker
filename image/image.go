@@ -129,6 +129,7 @@ type History struct {
 // Exporter provides interface for exporting and importing images
 type Exporter interface {
 	Load(io.ReadCloser, io.Writer, bool) error
+	LoadFromDirectory(string, io.Writer, bool) error
 	// TODO: Load(net.Context, io.ReadCloser, <- chan StatusMessage) error
 	Save([]string, io.Writer) error
 }

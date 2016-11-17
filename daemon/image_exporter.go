@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"io"
+	"os"
 
 	"github.com/docker/docker/image/tarexport"
 )
@@ -33,4 +34,31 @@ func (daemon *Daemon) LoadImage(inTar io.ReadCloser, outStream io.Writer, name s
 	imageExporter := tarexport.NewTarExporter(daemon.imageStore, daemon.layerStore, daemon.referenceStore, daemon, opts)
 	// the first arg will be "name" passed down from LoadImage() itself
 	return imageExporter.Load(inTar, outStream, quiet)
+}
+
+// LoadImageDirect loads a set of images into the repository. The target can
+// be a local directory or an uncompressed tar ball containing images and metadata.
+func (daemon *Daemon) LoadImageDirect(direct string, outStream io.Writer, name string, refs map[string]string, quiet bool) error {
+	opts := &tarexport.Options{
+		Name: name,
+		Refs: refs,
+	}
+
+	info, err := os.Stat(direct)
+	if err != nil {
+		return err
+	}
+
+	imageExporter := tarexport.NewTarExporter(daemon.imageStore, daemon.layerStore, daemon.referenceStore, daemon, opts)
+	if info.IsDir() {
+		return imageExporter.LoadFromDirectory(direct, outStream, quiet)
+	} else {
+		// Target is a tar file
+		inTar, err := os.Open(direct)
+		if err != nil {
+			return err
+		}
+		defer inTar.Close()
+		return imageExporter.Load(inTar, outStream, quiet)
+	}
 }

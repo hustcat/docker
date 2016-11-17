@@ -25,15 +25,6 @@ import (
 )
 
 func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool) error {
-	var (
-		sf             = streamformatter.NewJSONStreamFormatter()
-		progressOutput progress.Output
-	)
-	if !quiet {
-		progressOutput = sf.NewProgressOutput(outStream, false)
-	}
-	outStream = &streamformatter.StdoutFormatter{Writer: outStream, StreamFormatter: streamformatter.NewJSONStreamFormatter()}
-
 	tmpDir, err := ioutil.TempDir("", "docker-import-")
 	if err != nil {
 		return err
@@ -43,7 +34,20 @@ func (l *tarexporter) Load(inTar io.ReadCloser, outStream io.Writer, quiet bool)
 	if err := chrootarchive.Untar(inTar, tmpDir, nil); err != nil {
 		return err
 	}
+	return l.LoadFromDirectory(tmpDir, outStream, quiet)
+}
 
+func (l *tarexporter) LoadFromDirectory(directory string, outStream io.Writer, quiet bool) error {
+	var (
+		sf             = streamformatter.NewJSONStreamFormatter()
+		progressOutput progress.Output
+	)
+	if !quiet {
+		progressOutput = sf.NewProgressOutput(outStream, false)
+	}
+	outStream = &streamformatter.StdoutFormatter{Writer: outStream, StreamFormatter: streamformatter.NewJSONStreamFormatter()}
+
+	tmpDir := directory
 	// check and try to load an OCI image layout
 	ociLayoutPath, err := safePath(tmpDir, "oci-layout")
 	if err != nil {

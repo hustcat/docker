@@ -132,9 +132,10 @@ type ImageSaveOptions struct {
 // ImageLoadOptions holds the information
 // necessary to load a set of images.
 type ImageLoadOptions struct {
-	Quiet bool
-	Name  string
-	Refs  map[string]string
+	Quiet  bool
+	Name   string
+	Refs   map[string]string
+	Direct string
 }
 
 // ImageBuildOptions holds the information

@@ -222,8 +222,15 @@ func (s *imageRouter) postImagesLoad(ctx context.Context, w http.ResponseWriter,
 
 	output := ioutils.NewWriteFlusher(w)
 	defer output.Close()
-	if err := s.backend.LoadImage(r.Body, output, name, refs, quiet); err != nil {
-		output.Write(streamformatter.NewJSONStreamFormatter().FormatError(err))
+	direct := r.FormValue("direct")
+	if direct != "" {
+		if err := s.backend.LoadImageDirect(direct, output, name, refs, quiet); err != nil {
+			output.Write(streamformatter.NewJSONStreamFormatter().FormatError(err))
+		}
+	} else {
+		if err := s.backend.LoadImage(r.Body, output, name, refs, quiet); err != nil {
+			output.Write(streamformatter.NewJSONStreamFormatter().FormatError(err))
+		}
 	}
 	return nil
 }

@@ -26,7 +26,14 @@ func (cli *Client) ImageLoad(ctx context.Context, input io.Reader, opts types.Im
 	v.Set("refs", string(refsJSON))
 	v.Set("name", opts.Name)
 	headers := map[string][]string{"Content-Type": {"application/x-tar"}}
-	resp, err := cli.postRaw(ctx, "/images/load", v, input, headers)
+
+	var resp serverResponse
+	if opts.Direct != "" {
+		v.Set("direct", opts.Direct)
+		resp, err = cli.post(ctx, "/images/load", v, nil, headers)
+	} else {
+		resp, err = cli.postRaw(ctx, "/images/load", v, input, headers)
+	}
 	if err != nil {
 		return types.ImageLoadResponse{}, err
 	}
